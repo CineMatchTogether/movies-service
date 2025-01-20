@@ -35,7 +35,7 @@ jobs:
           echo "$ENV_FILE_CONTENT" > $APP_DIR/.env
 
           # Restart Docker Compose
-          docker-compose down
-          docker-compose pull
-          docker-compose up -d --build
+          docker compose down
+          docker compose pull
+          docker compose up -d --build
           EOF
