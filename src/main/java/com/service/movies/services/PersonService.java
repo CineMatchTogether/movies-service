@@ -68,4 +68,20 @@ public class PersonService {
     public void deleteMany(List<Long> ids) {
         personRepository.deleteAllById(ids);
     }
+
+    public Person getOrCreate(Long id, String photo, String name, String profession) {
+        Person person = personRepository.findById(id).orElse(null);
+        if (person != null) {
+            return person;
+        }
+
+        Person newPerson = Person.builder()
+                .id(id)
+                .photoUrl(photo)
+                .name(name)
+                .profession(profession)
+                .build();
+
+        return personRepository.save(newPerson);
+    }
 }

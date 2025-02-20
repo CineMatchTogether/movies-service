@@ -67,4 +67,15 @@ public class CountryService {
     public void deleteMany(List<Long> ids) {
         countryRepository.deleteAllById(ids);
     }
+
+    public Country getOrCreate(String name) {
+        if (countryRepository.existsByName(name)) {
+            return countryRepository.findByName(name);
+        }
+
+        Country newCountry = new Country();
+        newCountry.setName(name);
+
+        return countryRepository.save(newCountry);
+    }
 }

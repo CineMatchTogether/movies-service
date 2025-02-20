@@ -68,4 +68,15 @@ public class GenreService {
     public void deleteMany(List<Long> ids) {
         genreRepository.deleteAllById(ids);
     }
+
+    public Genre getOrCreate(String name) {
+        if (genreRepository.existsByName(name)) {
+            return genreRepository.findByName(name);
+        }
+
+        Genre newGenre = new Genre();
+        newGenre.setName(name);
+
+        return genreRepository.save(newGenre);
+    }
 }

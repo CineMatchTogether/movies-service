@@ -7,6 +7,7 @@ import com.service.movies.mappers.MovieMapper;
 import com.service.movies.models.dto.MovieDto;
 import com.service.movies.models.entities.Movie;
 import com.service.movies.repositories.MovieRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -72,5 +73,10 @@ public class MovieService {
 
     public void deleteMany(List<Long> ids) {
         movieRepository.deleteAllById(ids);
+    }
+
+    @Transactional
+    public void saveAll(List<Movie> movies) {
+        movieRepository.saveAll(movies);
     }
 }

@@ -1,10 +1,12 @@
 spring:
+  config:
+    import: optional:file:.env.properties
   application:
     name: movies-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: admin
-    password: password
+    url: jdbc:postgresql://localhost:5432/movies_db
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -16,10 +18,14 @@ spring:
     open-in-view: false
 
 server:
-  port: 8080
+  port: 8081
 
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+property:
+  app:
+    kino-poisk-api-key: ${KINO-POISK-API-KEY}

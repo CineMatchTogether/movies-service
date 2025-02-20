@@ -6,7 +6,7 @@ import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface GenreMapper {
-    Genre toEntity(com.service.movies.models.dto.GenreDto genreDto);
+    Genre toEntity(GenreDto genreDto);
 
     GenreDto toDto(Genre genre);
 
