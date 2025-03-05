@@ -4,7 +4,7 @@ spring:
   application:
     name: movies-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/movies_db
+    url: jdbc:postgresql://localhost:5433/movie-service-db
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver

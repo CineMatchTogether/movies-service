@@ -1,16 +1,17 @@
-version: '3.8'
 services:
   movies-service:
     image: movies-service:0.0.1
+    env_file:
+      - .env.properties
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8181:8181"
+      - "8081:8081"
     depends_on:
       - movies-service-db
     environment:
-      - SERVER_PORT=8181
+      - SERVER_PORT=8081
       - SPRING_DATASOURCE_URL=jdbc:postgresql://movies-service-db/movie-service-db
       - SPRING_DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
@@ -22,7 +23,7 @@ services:
       POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
       POSTGRES_DB: movie-service-db
     ports:
-      - "5433:5433"
+      - "5433:5432"
     volumes:
       - movie-service-db-data:/var/lib/postgresql/data
     restart: unless-stopped
