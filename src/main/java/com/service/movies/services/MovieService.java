@@ -6,6 +6,7 @@ import com.service.movies.filters.MovieFilter;
 import com.service.movies.mappers.MovieMapper;
 import com.service.movies.models.dto.MovieDto;
 import com.service.movies.models.entities.Movie;
+import com.service.movies.models.events.PageMovieFetchedEvent;
 import com.service.movies.repositories.MovieRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

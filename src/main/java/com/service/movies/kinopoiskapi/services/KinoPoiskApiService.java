@@ -3,16 +3,20 @@ package com.service.movies.kinopoiskapi.services;
 import com.service.movies.kinopoiskapi.dto.MovieListResponse;
 import com.service.movies.kinopoiskapi.mappers.MovieApiMapper;
 import com.service.movies.models.entities.Movie;
+import com.service.movies.models.events.PageMovieFetchedEvent;
+import com.service.movies.services.MovieFetchService;
 import com.service.movies.services.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +27,7 @@ public class KinoPoiskApiService {
     private final RestTemplate restTemplate;
     private final MovieService movieService;
     private final MovieApiMapper movieApiMapper;
-
+    private final MovieFetchService movieFetchService;
     private static final Logger logger = LoggerFactory.getLogger(KinoPoiskApiService.class);
     private static final String BASE_URL = "https://api.kinopoisk.dev/v1.4/movie";
 
@@ -35,7 +39,7 @@ public class KinoPoiskApiService {
         headers.set("X-API-KEY", ApiKey);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        String url = UriComponentsBuilder.fromHttpUrl(BASE_URL)
+        String url = UriComponentsBuilder.fromUriString(BASE_URL)
                 .queryParam("page", page)
                 .queryParam("limit", 200)
                 .queryParam("type", "movie")
@@ -72,6 +76,8 @@ public class KinoPoiskApiService {
         List<Movie> movies = response.getBody().docs().stream().map(movieApiMapper::toEntity).toList();
 
         movieService.saveAll(movies);
+
+        movieFetchService.logFetchedPage(movies, page);
 
         logger.info("Save movies on page {}", page);
     }
