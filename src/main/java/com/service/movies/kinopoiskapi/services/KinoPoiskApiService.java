@@ -3,7 +3,6 @@ package com.service.movies.kinopoiskapi.services;
 import com.service.movies.kinopoiskapi.dto.MovieListResponse;
 import com.service.movies.kinopoiskapi.mappers.MovieApiMapper;
 import com.service.movies.models.entities.Movie;
-import com.service.movies.models.events.PageMovieFetchedEvent;
 import com.service.movies.services.MovieFetchService;
 import com.service.movies.services.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -11,14 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class KinoPoiskApiService {
     @Value("${property.app.kino-poisk-api-key}")
     private String ApiKey;
 
-    public void fetchMovies(int page) {
+    public List<Movie> fetchMovies(int page) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-API-KEY", ApiKey);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -75,10 +76,31 @@ public class KinoPoiskApiService {
 
         List<Movie> movies = response.getBody().docs().stream().map(movieApiMapper::toEntity).toList();
 
-        movieService.saveAll(movies);
-
         movieFetchService.logFetchedPage(movies, page);
+        logger.info("Fetch movies on page {}", page);
 
-        logger.info("Save movies on page {}", page);
+        return movies;
+    }
+
+    public void asyncFetchPages(int startPage, int endPage) {
+
+        List<CompletableFuture<List<Movie>>> futures = new ArrayList<>();
+        ExecutorService executor = Executors.newFixedThreadPool(Math.min(endPage - startPage + 1, 10));
+
+        for (int page = startPage; page <= endPage; page++) {
+            final int currentPage = page;
+            CompletableFuture<List<Movie>> future = CompletableFuture.supplyAsync(() ->
+                    fetchMovies(currentPage), executor);
+            futures.add(future);
+        }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply(v -> futures.stream()
+                        .map(CompletableFuture::join)
+                        .flatMap(List::stream)
+                        .toList())
+                .thenAccept(movieService::saveAll);
+
+        executor.shutdown();
     }
 }

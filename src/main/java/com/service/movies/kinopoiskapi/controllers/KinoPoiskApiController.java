@@ -3,10 +3,7 @@ package com.service.movies.kinopoiskapi.controllers;
 import com.service.movies.kinopoiskapi.services.KinoPoiskApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/kinopoisk")
@@ -15,11 +12,13 @@ public class KinoPoiskApiController {
 
     private final KinoPoiskApiService kinoPoiskApiService;
 
-    @GetMapping("/fetchpage/{number}")
-    public ResponseEntity<?> fetchMoviesOnPage(@PathVariable int number) {
-        kinoPoiskApiService.fetchMovies(number);
+    @GetMapping("/fetchpages")
+    public ResponseEntity<String> fetchMoviesAsync(@RequestParam int startPage, @RequestParam int endPage) {
+        if (startPage > endPage || startPage < 0) {
+            return ResponseEntity.badRequest().body("Invalid page range");
+        }
+        kinoPoiskApiService.asyncFetchPages(startPage, endPage);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.accepted().body("Fetch started for pages " + startPage + " to " + endPage);
     }
-
 }
