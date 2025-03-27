@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -67,12 +66,18 @@ public class KinoPoiskApiService {
                 .toUriString();
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<MovieListResponse> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                MovieListResponse.class
-        );
+        ResponseEntity<MovieListResponse> response;
+        try {
+            response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    MovieListResponse.class
+            );
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            return null;
+        }
 
         List<Movie> movies = response.getBody().docs().stream().map(movieApiMapper::toEntity).toList();
 
@@ -84,22 +89,13 @@ public class KinoPoiskApiService {
 
     public void asyncFetchPages(int startPage, int endPage) {
 
-        List<CompletableFuture<List<Movie>>> futures = new ArrayList<>();
         ExecutorService executor = Executors.newFixedThreadPool(Math.min(endPage - startPage + 1, 10));
 
         for (int page = startPage; page <= endPage; page++) {
             final int currentPage = page;
-            CompletableFuture<List<Movie>> future = CompletableFuture.supplyAsync(() ->
-                    fetchMovies(currentPage), executor);
-            futures.add(future);
+            CompletableFuture.supplyAsync(() -> fetchMovies(currentPage), executor)
+                    .thenAccept(movieService::saveAll);
         }
-
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .thenApply(v -> futures.stream()
-                        .map(CompletableFuture::join)
-                        .flatMap(List::stream)
-                        .toList())
-                .thenAccept(movieService::saveAll);
 
         executor.shutdown();
     }

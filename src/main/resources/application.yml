@@ -16,6 +16,9 @@ spring:
         default_schema: public
     show-sql: false
     open-in-view: false
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092,localhost:9094
 
 server:
   port: 8081
