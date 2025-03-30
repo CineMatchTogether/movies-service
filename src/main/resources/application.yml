@@ -19,6 +19,8 @@ spring:
   kafka:
     producer:
       bootstrap-servers: localhost:9092,localhost:9094
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9094
 
 server:
   port: 8081

@@ -3,7 +3,6 @@ package com.service.movies.kinopoiskapi.services;
 import com.service.movies.kinopoiskapi.dto.MovieListResponse;
 import com.service.movies.kinopoiskapi.mappers.MovieApiMapper;
 import com.service.movies.models.entities.Movie;
-import com.service.movies.services.MovieFetchService;
 import com.service.movies.services.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
