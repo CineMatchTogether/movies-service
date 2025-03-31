@@ -5,6 +5,7 @@ import java.util.List;
 public record MovieApiDto(
         long id,
         String name,
+        String alternativeName,
         int year,
         String description,
         String shortDescription,

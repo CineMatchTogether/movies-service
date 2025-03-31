@@ -2,7 +2,6 @@ package com.service.movies.models.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +21,9 @@ public class Movie {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "en_name")
+    private String enName;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;

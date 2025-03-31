@@ -14,5 +14,6 @@ public interface MovieApiMapper {
     @Mapping(target = "imdbRating", source = "rating.imdb")
     @Mapping(target = "posterUrl", source = "poster.url")
     @Mapping(target = "logoUrl", source = "logo.url")
+    @Mapping(target = "enName", source = "alternativeName")
     Movie toEntity(MovieApiDto apiDto);
 }

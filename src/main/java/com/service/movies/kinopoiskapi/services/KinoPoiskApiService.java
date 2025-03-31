@@ -50,6 +50,7 @@ public class KinoPoiskApiService {
                 .queryParam("notNullFields", "poster.url")
                 .queryParam("selectFields", "id")
                 .queryParam("selectFields", "name")
+                .queryParam("selectFields", "alternativeName")
                 .queryParam("selectFields", "description")
                 .queryParam("selectFields", "shortDescription")
                 .queryParam("selectFields", "slogan")
