@@ -18,9 +18,9 @@ spring:
     open-in-view: false
   kafka:
     producer:
-      bootstrap-servers: localhost:9092,localhost:9094
+      bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:9092,localhost:9094}
     consumer:
-      bootstrap-servers: localhost:9092,localhost:9094
+      bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:9092,localhost:9094}
 
 server:
   port: 8081
@@ -33,4 +33,5 @@ springdoc:
 
 property:
   app:
+    staticUrl: ${STATIC_URL:http://localhost:8081/swagger-ui/index.html}
     kino-poisk-api-key: ${KINO-POISK-API-KEY}

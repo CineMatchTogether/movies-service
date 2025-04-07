@@ -48,6 +48,7 @@ public class KinoPoiskApiService {
                 .queryParam("sortType", -1)
                 .queryParam("notNullFields", "name")
                 .queryParam("notNullFields", "poster.url")
+                .queryParam("notNullFields", "alternativeName")
                 .queryParam("selectFields", "id")
                 .queryParam("selectFields", "name")
                 .queryParam("selectFields", "alternativeName")

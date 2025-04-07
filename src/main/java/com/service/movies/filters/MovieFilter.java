@@ -23,7 +23,7 @@ public record MovieFilter(String genresNameContains, String nameContains, Intege
 
     private Specification<Movie> nameContainsSpec() {
         return ((root, query, cb) -> StringUtils.hasText(nameContains)
-                ? cb.like(cb.lower(root.get("name")), "%" + nameContains.toLowerCase() + "%")
+                ? cb.like(cb.lower(root.get("enName")), "%" + nameContains.toLowerCase() + "%")
                 : null);
     }
 
